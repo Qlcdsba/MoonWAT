@@ -124,3 +124,25 @@ test "parser float" {
   let s3 = State::{ input: "1e-5", offset: 0, line: 1, col: 1 }
   inspect(p.parse(s3), content="Ok((0.00001, State(offset=4, line=1, col=5)))")
 }
+
+test "parser span" {
+  let p = tag("hello").span()
+  let s = State::{ input: "hello world", offset: 0, line: 1, col: 1 }
+  inspect(p.parse(s), content="Ok(((hello, Span(start=Position(line=1, col=1, offset=0), end=Position(line=1, col=6, offset=5))), State(offset=5, line=1, col=6)))")
+}
+
+test "parser error format" {
+  let p = tag("hello")
+  let s = State::{ input: "world", offset: 0, line: 1, col: 1 }
+  match p.parse(s) {
+    Ok(_) => fail("should fail")
+    Err(err) => {
+      let formatted = err.format(s.input)
+      inspect(formatted, content=(
+        #|Parse error at line 1, col 1:
+        #|  world
+        #|  ^ -- TagExpected("hello")
+      ))
+    }
+  }
+}

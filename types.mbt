@@ -10,6 +10,15 @@ pub impl Show for Position with fn output(self, logger) {
   logger.write_string("Position(line=\{self.line}, col=\{self.col}, offset=\{self.offset})")
 }
 
+pub struct Span {
+  start : Position
+  end : Position
+} derive(Eq)
+
+pub impl Show for Span with fn output(self, logger) {
+  logger.write_string("Span(start=\{self.start}, end=\{self.end})")
+}
+
 pub struct State {
   input : String
   offset : Int

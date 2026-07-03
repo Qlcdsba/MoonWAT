@@ -41,3 +41,47 @@ test "parser or choice success second" {
   let s = State::{ input: "abc", offset: 0, line: 1, col: 1 }
   inspect(p.parse(s), content="Ok((2, State(offset=0, line=1, col=1)))")
 }
+
+fn char_a() -> Parser[Char] {
+  Parser::new(fn(state) {
+    if state.offset < state.input.length() && state.input[state.offset] == 'a' {
+      let next_s = State::{
+        input: state.input,
+        offset: state.offset + 1,
+        line: state.line,
+        col: state.col + 1
+      }
+      Ok(('a', next_s))
+    } else {
+      let pos = Position::{ line: state.line, col: state.col, offset: state.offset }
+      Err(ParseError::{ pos, detail: CharExpected('a') })
+    }
+  })
+}
+
+test "parser optional" {
+  let p = char_a().optional()
+  let s = State::{ input: "abc", offset: 0, line: 1, col: 1 }
+  inspect(p.parse(s), content="Ok((Some(a), State(offset=1, line=1, col=2)))")
+  
+  let s2 = State::{ input: "bbc", offset: 0, line: 1, col: 1 }
+  inspect(p.parse(s2), content="Ok((None, State(offset=0, line=1, col=1)))")
+}
+
+test "parser many0" {
+  let p = char_a().many0()
+  let s = State::{ input: "aaab", offset: 0, line: 1, col: 1 }
+  inspect(p.parse(s), content="Ok(([a, a, a], State(offset=3, line=1, col=4)))")
+  
+  let s2 = State::{ input: "bb", offset: 0, line: 1, col: 1 }
+  inspect(p.parse(s2), content="Ok(([], State(offset=0, line=1, col=1)))")
+}
+
+test "parser many1" {
+  let p = char_a().many1()
+  let s = State::{ input: "aaab", offset: 0, line: 1, col: 1 }
+  inspect(p.parse(s), content="Ok(([a, a, a], State(offset=3, line=1, col=4)))")
+  
+  let s2 = State::{ input: "bb", offset: 0, line: 1, col: 1 }
+  inspect(p.parse(s2), content="Err(ParseError(pos=Position(line=1, col=1, offset=0), detail=CharExpected('a')))")
+}

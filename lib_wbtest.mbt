@@ -170,3 +170,17 @@ test "parser separated_list empty and trailing" {
   let s2 = State::{ input: "a,a,a,", offset: 0, line: 1, col: 1 }
   inspect(p.parse(s2), content="Ok(([a, a, a], State(offset=5, line=1, col=6)))")
 }
+
+test "parser csv basic" {
+  let p = csv_document()
+  let input = "name,age,city\nAlice,30,New York\nBob,25,Paris"
+  let s = State::{ input, offset: 0, line: 1, col: 1 }
+  inspect(p.parse(s), content="Ok(([[name, age, city], [Alice, 30, New York], [Bob, 25, Paris]], State(offset=44, line=3, col=13)))")
+}
+
+test "parser csv quoted and escaped" {
+  let p = csv_document()
+  let input = "col1,col2\n\"hello, world\",\"he said: \"\"yes\"\"\""
+  let s = State::{ input, offset: 0, line: 1, col: 1 }
+  inspect(p.parse(s), content="Ok(([[col1, col2], [hello, world, he said: \"yes\"]], State(offset=43, line=2, col=34)))")
+}

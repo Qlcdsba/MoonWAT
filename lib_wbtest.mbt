@@ -184,3 +184,10 @@ test "parser csv quoted and escaped" {
   let s = State::{ input, offset: 0, line: 1, col: 1 }
   inspect(p.parse(s), content="Ok(([[col1, col2], [hello, world, he said: \"yes\"]], State(offset=43, line=2, col=34)))")
 }
+
+test "parser json basic" {
+  let p = json_value()
+  let input = " { \"key\": [true, null, 12.34] } "
+  let s = State::{ input, offset: 0, line: 1, col: 1 }
+  inspect(p.parse(s), content="Ok(({\"key\": [true, null, 12.34]}, State(offset=32, line=1, col=33)))")
+}

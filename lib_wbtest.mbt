@@ -146,3 +146,27 @@ test "parser error format" {
     }
   }
 }
+
+test "parser float invalid" {
+  let p = float()
+  let s = State::{ input: "123.", offset: 0, line: 1, col: 1 }
+  inspect(p.parse(s), content="Err(ParseError(pos=Position(line=1, col=1, offset=0), detail=DigitExpected))")
+  
+  let s2 = State::{ input: "1e", offset: 0, line: 1, col: 1 }
+  inspect(p.parse(s2), content="Err(ParseError(pos=Position(line=1, col=1, offset=0), detail=DigitExpected))")
+}
+
+test "parser tag with newlines" {
+  let p = tag("a\nb\nc")
+  let s = State::{ input: "a\nb\ncd", offset: 0, line: 1, col: 1 }
+  inspect(p.parse(s), content="Ok((a\nb\nc, State(offset=5, line=3, col=2)))")
+}
+
+test "parser separated_list empty and trailing" {
+  let p = char('a').separated_list(char(','))
+  let s1 = State::{ input: "", offset: 0, line: 1, col: 1 }
+  inspect(p.parse(s1), content="Ok(([], State(offset=0, line=1, col=1)))")
+  
+  let s2 = State::{ input: "a,a,a,", offset: 0, line: 1, col: 1 }
+  inspect(p.parse(s2), content="Ok(([a, a, a], State(offset=5, line=1, col=6)))")
+}

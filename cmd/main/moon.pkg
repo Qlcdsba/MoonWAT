@@ -1,0 +1,7 @@
+// import {
+//   "caassien/moonparsec" @lib,
+// }
+
+options(
+  "is-main": true,
+)

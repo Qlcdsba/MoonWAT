@@ -191,3 +191,24 @@ test "parser json basic" {
   let s = State::{ input, offset: 0, line: 1, col: 1 }
   inspect(p.parse(s), content="Ok(({\"key\": [true, null, 12.34]}, State(offset=32, line=1, col=33)))")
 }
+
+test "parser wat basic" {
+  let p = wat_expr()
+  let input = "(module (func $add (param $x i32) (result i32)))"
+  let s = State::{ input, offset: 0, line: 1, col: 1 }
+  inspect(p.parse(s), content="Ok(((module (func $add (param $x i32) (result i32))), State(offset=48, line=1, col=49)))")
+}
+
+test "parser wat with comments" {
+  let p = wat_expr()
+  let input =
+    #|(module
+    #|  ;; this is a line comment
+    #|  (func $add (param $x i32) (result i32)
+    #|    (; block comment ;)
+    #|    local.get $x
+    #|  )
+    #|)
+  let s = State::{ input, offset: 0, line: 1, col: 1 }
+  inspect(p.parse(s), content="Ok(((module (func $add (param $x i32) (result i32) local.get $x)), State(offset=123, line=7, col=2)))")
+}

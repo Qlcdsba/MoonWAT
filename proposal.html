@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <title>开源创新大赛项目申报书 - moonparsec</title>
+  <title>开源创新大赛项目申报书 - MoonWAT</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
     
@@ -228,13 +228,13 @@
   <div class="container">
     <header>
       <div class="logo-area">
-        <h1>moonparsec</h1>
-        <p>基于 MoonBit 语言的轻量级高可靠 Parser Combinator 解析函数库</p>
+        <h1>MoonWAT</h1>
+        <p>基于 MoonBit 语言的 WebAssembly 文本格式 (WAT) 语法解析与诊断引擎</p>
       </div>
       <div class="meta-area">
         <div><strong>申报赛事:</strong> 2026 软件开源创新大赛 (OSC2026)</div>
         <div><strong>选题方向:</strong> Track 1 开源基础软件开发</div>
-        <div><strong>项目标识:</strong> moonparsec</div>
+        <div><strong>项目标识:</strong> moonparsec (底层核心库) / MoonWAT</div>
       </div>
     </header>
     
@@ -243,7 +243,7 @@
         <div class="card">
           <div class="card-title">项目概述</div>
           <p class="desc">
-            <code>moonparsec</code> 是专为 MoonBit 语言原生设计的高性能、零拷贝、类型安全的解析器组合子 (Parser Combinator) 框架。该项目填补了 MoonBit 生态中声明式词法解析框架的空白，允许开发者以构建“乐高积木”的形式，自由组装小型解析单元，轻松应对针对复杂文本协议（如 JSON, CSV, YAML 或自定义 DSL）的高可靠解析。
+            <code>MoonWAT</code> 是专为 MoonBit 语言开发的高性能 WebAssembly 文本格式（WAT）解析与语法诊断分析引擎。由于 MoonBit 深度绑定 WebAssembly 平台，该项目通过底层高度优化的 Parser Combinator 解析核心，构建出针对 WebAssembly 规范中文本格式（S-expression S-表达式）的完整语法树（AST）及编译诊断流，致力于为 MoonBit 开发者提供原生的 Wasm 解析与分析底层工具链。
           </p>
         </div>
         
@@ -252,19 +252,19 @@
           <div class="feature-list">
             <div class="feature-item">
               <div class="feature-dot"></div>
-              <div class="feature-text"><strong>零拷贝性能表现</strong>：通过指针偏移量 (Offset) 和字符串视图流式匹配，完全避免了解析过程中的中间临时分配，提高 GC 效率。</div>
+              <div class="feature-text"><strong>完整的 S-Expression 支持</strong>：基于 AST 设计，可以完美转换、识别并输出 Wasm 所有的嵌套指令与 S-表达式层级树。</div>
             </div>
             <div class="feature-item">
               <div class="feature-dot"></div>
-              <div class="feature-text"><strong>精准的 Span 追踪</strong>：行/列号 (Line/Column) 及物理偏移自动递增，配合 <code>span()</code> 组合子，可精确保存 AST 语法节点的物理起止范围。</div>
+              <div class="feature-text"><strong>WAT 注释流过滤与追踪</strong>：内置自动剥离单行 <code>;;</code> 以及多行块级 <code>(; ... ;)</code> 注释的解析逻辑，避免对核心 AST 的构建产生噪音。</div>
             </div>
             <div class="feature-item">
               <div class="feature-dot"></div>
-              <div class="feature-text"><strong>编译器级智能报错</strong>：独创 <code>ParseError::format</code>，可在出错时提取代码所在行的上下文，输出形如 <code>^ -- Expected digit</code> 的视觉诊断，利于友好纠错。</div>
+              <div class="feature-text"><strong>精确的 Span 与行/列追踪</strong>：在解析 Wasm 大文件时自动增量计算行、列，利用 <code>span()</code> 组合子精准标记函数、参数、局部变量等指令集的物理起止范围。</div>
             </div>
             <div class="feature-item">
               <div class="feature-dot"></div>
-              <div class="feature-text"><strong>无警告纯正适配</strong>：完美融入 MoonBit 最新的泛型参数约束、无副作用 try-catch 控制流，在严格的代码检查中保持 100% 编译通过且无任何警告。</div>
+              <div class="feature-text"><strong>零拷贝与极致报错诊断</strong>：继续沿用偏移动态游标流的零拷贝设计，报错时由 <code>ParseError::format</code> 自动提取上下文生成精准的 `^` 诊断信息。</div>
             </div>
           </div>
         </div>
@@ -272,11 +272,11 @@
         <div class="card">
           <div class="card-title">测试与验证成果</div>
           <p class="desc" style="margin-bottom: 2mm;">
-            项目坚持测试驱动开发（TDD），构建了白盒单体测试集。对多分支回溯回滚、换行统计、浮点数复杂指数匹配等进行了深入压测。
+            项目拥有完备的白盒单体测试集。不仅通过了对核心组合子、浮点数转换的验证，更通过了对复杂多级嵌套的 WAT 模块段以及复杂跨行注释的代码段测试。
           </p>
           <div class="stats-grid">
             <div class="stat-box">
-              <div class="stat-val">20 / 20</div>
+              <div class="stat-val">22 / 22</div>
               <div class="stat-lbl">白盒测试通过</div>
             </div>
             <div class="stat-box">
@@ -293,47 +293,49 @@
       
       <div class="right-col">
         <div class="card">
-          <div class="card-title">坐标解析器编写示例</div>
+          <div class="card-title">WAT 解析器编写示例</div>
           <pre>
-<span class="comment">// 将 "(12, -34)" 解析为 (Int, Int)</span>
-<span class="keyword">fn</span> parse_coordinate() -> <span class="type">Parser</span>[(<span class="type">Int</span>, <span class="type">Int</span>)] {
-  <span class="keyword">let</span> comma = char(<span class="string">','</span>)
-  <span class="keyword">let</span> num = int()
-  char(<span class="string">'('</span>).preceded(
-    num.terminated(comma).and_then(<span class="keyword">fn</span>(x) {
-      num.terminated(char(<span class="string">')'</span>)).map(<span class="keyword">fn</span>(y) {
-        (x, y)
-      })
-    })
-  )
+<span class="comment">// 递归解析 Wasm 的 S-Expression 层级树</span>
+<span class="keyword">pub fn</span> wat_expr() -> <span class="type">Parser</span>[<span class="type">SExpr</span>] {
+  Parser::new(<span class="keyword">fn</span>(state) {
+    <span class="keyword">let</span> p = wat_list().or(wat_atom())
+    p.parse(state)
+  })
+}
+
+<span class="comment">// 过滤并跳过空格与单行/多行注释</span>
+<span class="keyword">pub fn</span> wat_ignored() -> <span class="type">Parser</span>[<span class="type">Unit</span>] {
+  <span class="keyword">let</span> ws = satisfy(<span class="keyword">fn</span>(c) { c == <span class="string">' '</span> ... })
+  ws.or(wat_line_comment())
+    .or(wat_block_comment())
 }
           </pre>
         </div>
         
         <div class="card">
-          <div class="card-title">典型落地应用场景</div>
+          <div class="card-title">多维解析适配与验证</div>
           <div class="feature-list">
             <div class="feature-item">
               <div class="feature-dot"></div>
-              <div class="feature-text"><strong>RFC 4180 兼容的 CSV 解析器</strong>：已基于本库实现，稳定应对包含引号转义 <code>""</code> 以及嵌入逗号/新行的高复杂度表格数据。</div>
+              <div class="feature-text"><strong>RFC 4180 CSV & JSON 完美支持</strong>：除了核心的 WAT 引擎，底层依然完全兼容并跑通了包含嵌套、引号转义等在内的 JSON 与 CSV 工业级解析流。</div>
             </div>
             <div class="feature-item">
               <div class="feature-dot"></div>
-              <div class="feature-text"><strong>支持嵌套递归的 JSON 解析器</strong>：支持 <code>Null</code>, <code>Bool</code>, <code>Number</code>, <code>String</code> 以及多级嵌套列表和 Object，树状 AST 输出直观精巧。</div>
+              <div class="feature-text"><strong>无警告编译质量</strong>：在最新的 MoonBit 编译器上完美通过全部安全编译，保证无任何垃圾回收 (GC) 负担与性能拖累。</div>
             </div>
           </div>
         </div>
         
         <div class="card">
-          <div class="card-title">未来规划</div>
+          <div class="card-title">未来规划规划</div>
           <div class="feature-list">
             <div class="feature-item">
               <div class="feature-dot"></div>
-              <div class="feature-text"><strong>Wasm 底层融合</strong>：适配 Wasm-GC 底层的多语言原生类型映射，使字符串转换效率实现跃升。</div>
+              <div class="feature-text"><strong>Wasm 解码与验证器</strong>：在语法解析的基础上，向上扩展对编译生成的 `.wasm` 二进制字节码解码以及静态语义规则验证器。</div>
             </div>
             <div class="feature-item">
               <div class="feature-dot"></div>
-              <div class="feature-text"><strong>标准扩展生态</strong>：计划发布对 YAML 及 TOML 语言的支持插件，成为 MoonBit 全场景解析基石。</div>
+              <div class="feature-text"><strong>Wasm-GC 优化合并</strong>：紧密跟踪 Wasm-GC 底层运行效率，实现超大型 WAT 项目分析的极速响应。</div>
             </div>
           </div>
         </div>
